@@ -1,0 +1,1151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WoodenStreet – My Experience</title>
+
+  <!-- Favicon: WoodenStreet orange "W" -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='8' fill='%23E8500A'/%3E%3Ctext x='50%25' y='54%25' dominant-baseline='middle' text-anchor='middle' font-family='Georgia,serif' font-size='40' font-weight='bold' fill='white'%3EW%3C/text%3E%3C/svg%3E" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --ws-orange: #E8500A;
+      --ws-orange-dark: #c43f06;
+      --ws-gray: #4a4a4a;
+      --ws-light: #f7f3ef;
+      --ws-white: #ffffff;
+      --ws-red: #c0392b;
+      --ws-ink: #1a1a1a;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    /* ─── SPLASH SCREEN ──────────────────────── */
+    #splash {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: #0a0a0a;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    #splash.hiding {
+      animation: splashFade 1.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+      pointer-events: none;
+    }
+
+    @keyframes splashFade {
+      0%   { opacity: 1; }
+      40%  { opacity: 1; }
+      100% { opacity: 0; }
+    }
+
+    /* Content drifts up gently as the fade happens */
+    #splash.hiding .splash-content {
+      animation: splashDrift 1.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+
+    @keyframes splashDrift {
+      0%   { transform: translateY(0); opacity: 1; }
+      30%  { opacity: 1; }
+      100% { transform: translateY(-40px); opacity: 0; }
+    }
+
+    /* Animated grain overlay */
+    #splash::before {
+      content: '';
+      position: absolute;
+      inset: -50%;
+      width: 200%;
+      height: 200%;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.08'/%3E%3C/svg%3E");
+      opacity: 0.35;
+      animation: grainShift 0.4s steps(1) infinite;
+      pointer-events: none;
+    }
+
+    @keyframes grainShift {
+      0%   { transform: translate(0,0); }
+      25%  { transform: translate(-3%,-4%); }
+      50%  { transform: translate(2%, 3%); }
+      75%  { transform: translate(-2%, 1%); }
+      100% { transform: translate(3%, -2%); }
+    }
+
+    /* Vignette */
+    #splash::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 80% 80% at 50% 50%, transparent 40%, rgba(0,0,0,0.7) 100%);
+      pointer-events: none;
+    }
+
+    .splash-content {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      padding: 24px;
+    }
+
+    .splash-eyebrow {
+      font-family: 'DM Sans', sans-serif;
+      font-size: clamp(11px, 1.5vw, 13px);
+      letter-spacing: 5px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.3);
+      margin-bottom: 40px;
+      opacity: 0;
+      animation: fadeInUp 0.7s 0.3s ease forwards;
+    }
+
+    .splash-line {
+      display: block;
+      font-family: 'Playfair Display', serif;
+      font-weight: 900;
+      color: white;
+      line-height: 1.05;
+      overflow: hidden;
+    }
+
+    .splash-line-inner {
+      display: block;
+      transform: translateY(110%);
+    }
+
+    /* eyebrow = child 1, lines = child 2,3,4 */
+    .splash-line:nth-child(2) { font-size: clamp(28px, 4.2vw, 58px); }
+    .splash-line:nth-child(3) { font-size: clamp(28px, 4.2vw, 58px); }
+    .splash-line:nth-child(4) {
+      font-size: clamp(36px, 5.8vw, 80px);
+      color: var(--ws-orange);
+      margin-top: 2px;
+    }
+
+    .splash-line.animate .splash-line-inner {
+      animation: lineReveal 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .splash-line:nth-child(2).animate .splash-line-inner { animation-delay: 0.5s; }
+    .splash-line:nth-child(3).animate .splash-line-inner { animation-delay: 0.82s; }
+    .splash-line:nth-child(4).animate .splash-line-inner { animation-delay: 1.15s; }
+
+    /* Airtel credit bottom-left */
+    .splash-credit {
+      position: absolute;
+      bottom: 28px;
+      left: 32px;
+      font-size: 11px;
+      letter-spacing: 0.5px;
+      color: rgba(255,255,255,0.2);
+      opacity: 0;
+      animation: fadeInUp 0.6s 2.2s ease forwards;
+      z-index: 3;
+    }
+
+    .splash-credit a {
+      color: rgba(255,255,255,0.35);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+      transition: color 0.2s;
+    }
+
+    .splash-credit a:hover { color: var(--ws-orange); }
+
+    @keyframes lineReveal {
+      to { transform: translateY(0); }
+    }
+
+    .splash-divider {
+      width: 0;
+      height: 1px;
+      background: linear-gradient(to right, transparent, var(--ws-orange), transparent);
+      margin: 36px auto;
+      animation: dividerExpand 0.8s 1.6s ease forwards;
+    }
+
+    @keyframes dividerExpand {
+      to { width: 200px; }
+    }
+
+    .splash-sub {
+      font-family: 'DM Sans', sans-serif;
+      font-size: clamp(14px, 1.8vw, 17px);
+      color: rgba(255,255,255,0.45);
+      font-weight: 300;
+      letter-spacing: 0.5px;
+      opacity: 0;
+      animation: fadeInUp 0.7s 2s ease forwards;
+    }
+
+    .splash-progress {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      height: 2px;
+      background: var(--ws-orange);
+      width: 0%;
+      animation: progressFill 3.8s 0.4s linear forwards;
+      box-shadow: 0 0 12px rgba(232,80,10,0.7);
+    }
+
+    @keyframes progressFill {
+      to { width: 100%; }
+    }
+
+    .splash-skip {
+      position: absolute;
+      bottom: 28px;
+      right: 32px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.2);
+      opacity: 0;
+      animation: fadeInUp 0.5s 2.2s ease forwards;
+      z-index: 3;
+    }
+
+    .splash-skip:hover { color: rgba(255,255,255,0.5); }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Prevent body scroll while splash is visible */
+    body.splash-active { overflow: hidden; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--ws-light);
+      color: var(--ws-ink);
+      overflow-x: hidden;
+    }
+
+    /* ─── NAVBAR ─────────────────────────────── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--ws-white);
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 40px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      background: var(--ws-orange);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Playfair Display', serif;
+      font-size: 22px;
+      font-weight: 900;
+      color: white;
+    }
+
+    .logo-text {
+      font-family: 'Playfair Display', serif;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--ws-ink);
+      line-height: 1;
+    }
+
+    .logo-text span {
+      color: var(--ws-orange);
+    }
+
+    .nav-badge {
+      background: var(--ws-red);
+      color: white;
+      font-size: 11px;
+      font-weight: 500;
+      padding: 5px 12px;
+      border-radius: 20px;
+      letter-spacing: 0.5px;
+    }
+
+    /* ─── HERO ───────────────────────────────── */
+    .hero {
+      min-height: 92vh;
+      background: var(--ws-ink);
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      text-align: center;
+      padding: 80px 24px;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 60% 60% at 20% 50%, rgba(232,80,10,0.18) 0%, transparent 70%),
+        radial-gradient(ellipse 50% 50% at 80% 30%, rgba(232,80,10,0.10) 0%, transparent 70%);
+    }
+
+    /* big watermark */
+    .hero-watermark {
+      position: absolute;
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(120px, 22vw, 260px);
+      font-weight: 900;
+      color: rgba(255,255,255,0.03);
+      line-height: 1;
+      user-select: none;
+      pointer-events: none;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      white-space: nowrap;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      max-width: 800px;
+    }
+
+    .hero-eyebrow {
+      display: inline-block;
+      background: rgba(232,80,10,0.2);
+      border: 1px solid rgba(232,80,10,0.4);
+      color: var(--ws-orange);
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 6px 16px;
+      border-radius: 20px;
+      margin-bottom: 28px;
+      animation: fadeUp 0.6s ease both;
+    }
+
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(36px, 6vw, 72px);
+      font-weight: 900;
+      color: var(--ws-white);
+      line-height: 1.1;
+      margin-bottom: 24px;
+      animation: fadeUp 0.6s 0.1s ease both;
+    }
+
+    .hero h1 em {
+      font-style: normal;
+      color: var(--ws-orange);
+    }
+
+    .hero-sub {
+      font-size: clamp(16px, 2vw, 20px);
+      color: rgba(255,255,255,0.65);
+      line-height: 1.7;
+      max-width: 580px;
+      margin: 0 auto 40px;
+      font-weight: 300;
+      animation: fadeUp 0.6s 0.2s ease both;
+    }
+
+    .hero-cta {
+      display: inline-flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+      animation: fadeUp 0.6s 0.3s ease both;
+    }
+
+    .btn-primary {
+      background: var(--ws-orange);
+      color: white;
+      padding: 14px 32px;
+      border-radius: 4px;
+      font-weight: 500;
+      font-size: 15px;
+      text-decoration: none;
+      transition: background 0.2s, transform 0.2s;
+    }
+
+    .btn-primary:hover { background: var(--ws-orange-dark); transform: translateY(-2px); }
+
+    .btn-ghost {
+      background: transparent;
+      color: rgba(255,255,255,0.7);
+      padding: 14px 32px;
+      border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 4px;
+      font-size: 15px;
+      text-decoration: none;
+      transition: border-color 0.2s, color 0.2s;
+    }
+
+    .btn-ghost:hover { border-color: var(--ws-orange); color: var(--ws-orange); }
+
+    /* scroll hint */
+    .scroll-hint {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      margin-top: 44px;
+      color: rgba(255,255,255,0.4);
+      font-size: 14px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      animation: fadeUp 1s 0.5s ease both;
+    }
+
+    .scroll-hint::after {
+      content: '';
+      width: 1px;
+      height: 56px;
+      background: linear-gradient(to bottom, rgba(255,255,255,0.4), transparent);
+      animation: scrollLine 1.5s infinite;
+    }
+
+    @keyframes scrollLine { 0%,100% { opacity: 0; transform: scaleY(0); transform-origin: top; } 50% { opacity: 1; transform: scaleY(1); } }
+
+    /* ─── STATS STRIP ─────────────────────────── */
+    .stats-strip {
+      background: var(--ws-orange);
+      display: flex;
+      justify-content: space-around;
+      flex-wrap: wrap;
+      gap: 0;
+    }
+
+    .stat {
+      padding: 28px 24px;
+      text-align: center;
+      flex: 1;
+      min-width: 180px;
+      border-right: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .stat:last-child { border-right: none; }
+
+    .stat-number {
+      font-family: 'Playfair Display', serif;
+      font-size: 36px;
+      font-weight: 900;
+      color: white;
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: rgba(255,255,255,0.8);
+      margin-top: 6px;
+      letter-spacing: 0.5px;
+    }
+
+    /* ─── SECTIONS ────────────────────────────── */
+    section {
+      padding: 80px 24px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .section-label {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--ws-orange);
+      margin-bottom: 12px;
+    }
+
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(28px, 4vw, 46px);
+      font-weight: 700;
+      color: var(--ws-ink);
+      line-height: 1.2;
+      margin-bottom: 16px;
+    }
+
+    .section-title em {
+      font-style: normal;
+      color: var(--ws-orange);
+    }
+
+    .section-intro {
+      font-size: 17px;
+      color: var(--ws-gray);
+      line-height: 1.75;
+      max-width: 640px;
+      font-weight: 300;
+    }
+
+    /* ─── TIMELINE ────────────────────────────── */
+    .timeline-section {
+      background: var(--ws-white);
+      padding: 80px 0;
+    }
+
+    .timeline-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .timeline {
+      position: relative;
+      margin-top: 52px;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 28px;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: linear-gradient(to bottom, var(--ws-orange), var(--ws-red));
+    }
+
+    .tl-item {
+      display: flex;
+      gap: 28px;
+      margin-bottom: 44px;
+      align-items: flex-start;
+      animation: fadeUp 0.5s ease both;
+    }
+
+    .tl-dot {
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      background: var(--ws-orange);
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      position: relative;
+      z-index: 1;
+      box-shadow: 0 4px 20px rgba(232,80,10,0.3);
+    }
+
+    .tl-dot.red { background: var(--ws-red); box-shadow: 0 4px 20px rgba(192,57,43,0.3); }
+
+    .tl-body {
+      background: var(--ws-light);
+      border-radius: 12px;
+      padding: 20px 24px;
+      flex: 1;
+      border-left: 3px solid var(--ws-orange);
+    }
+
+    .tl-body.red { border-left-color: var(--ws-red); }
+
+    .tl-date {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--ws-orange);
+      letter-spacing: 1px;
+      margin-bottom: 6px;
+    }
+
+    .tl-date.red { color: var(--ws-red); }
+
+    .tl-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--ws-ink);
+      margin-bottom: 8px;
+    }
+
+    .tl-desc {
+      font-size: 14px;
+      color: var(--ws-gray);
+      line-height: 1.7;
+    }
+
+    /* ─── ISSUES GRID ─────────────────────────── */
+    .issues-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 20px;
+      margin-top: 48px;
+    }
+
+    .issue-card {
+      background: var(--ws-white);
+      border-radius: 12px;
+      padding: 28px 24px;
+      border-top: 4px solid var(--ws-red);
+      box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .issue-card:hover { transform: translateY(-4px); box-shadow: 0 10px 36px rgba(0,0,0,0.1); }
+
+    .issue-icon { font-size: 32px; margin-bottom: 14px; }
+
+    .issue-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--ws-ink);
+      margin-bottom: 10px;
+    }
+
+    .issue-desc {
+      font-size: 13.5px;
+      color: var(--ws-gray);
+      line-height: 1.65;
+    }
+
+    /* ─── QUOTE / CALLOUT ─────────────────────── */
+    .callout {
+      background: var(--ws-ink);
+      border-radius: 16px;
+      padding: 48px 40px;
+      text-align: center;
+      margin: 60px 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .callout::before {
+      content: '"';
+      position: absolute;
+      top: -20px;
+      left: 20px;
+      font-family: 'Playfair Display', serif;
+      font-size: 180px;
+      color: rgba(232,80,10,0.1);
+      line-height: 1;
+      pointer-events: none;
+    }
+
+    .callout-text {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(18px, 3vw, 26px);
+      color: var(--ws-white);
+      line-height: 1.55;
+      max-width: 700px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    .callout-text em {
+      font-style: normal;
+      color: var(--ws-orange);
+    }
+
+    /* ─── WHAT THEY PROMISED ──────────────────── */
+    .compare-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-top: 44px;
+    }
+
+    @media (max-width: 600px) { .compare-grid { grid-template-columns: 1fr; } }
+
+    .compare-card {
+      border-radius: 12px;
+      padding: 28px 24px;
+    }
+
+    .compare-card.promise {
+      background: #eaf6f0;
+      border: 1.5px solid #a8d5bb;
+    }
+
+    .compare-card.reality {
+      background: #fdf0ee;
+      border: 1.5px solid #f0b8b0;
+    }
+
+    .compare-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+
+    .compare-card.promise .compare-label { color: #2e7d52; }
+    .compare-card.reality .compare-label { color: var(--ws-red); }
+
+    .compare-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .compare-list li {
+      font-size: 14px;
+      color: var(--ws-gray);
+      display: flex;
+      gap: 10px;
+      line-height: 1.5;
+    }
+
+    .compare-list li::before { flex-shrink: 0; }
+    .compare-card.promise .compare-list li::before { content: '✓'; color: #2e7d52; font-weight: 700; }
+    .compare-card.reality .compare-list li::before { content: '✗'; color: var(--ws-red); font-weight: 700; }
+
+    /* ─── FOOTER / CTA ────────────────────────── */
+    .footer-cta {
+      background: var(--ws-orange);
+      text-align: center;
+      padding: 72px 24px;
+    }
+
+    .footer-cta h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(26px, 4vw, 44px);
+      color: white;
+      margin-bottom: 16px;
+    }
+
+    .footer-cta p {
+      color: rgba(255,255,255,0.8);
+      font-size: 16px;
+      margin-bottom: 36px;
+      max-width: 560px;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.65;
+    }
+
+    .share-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .share-btn {
+      background: white;
+      color: var(--ws-orange);
+      padding: 12px 24px;
+      border-radius: 4px;
+      font-weight: 500;
+      font-size: 14px;
+      text-decoration: none;
+      transition: transform 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .share-btn:hover { transform: translateY(-2px); }
+
+    /* ─── PERSISTENT INSPIRED-BY BADGE ──────── */
+    .inspired-badge {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      z-index: 500;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(10,10,10,0.82);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 100px;
+      padding: 9px 16px 9px 12px;
+      text-decoration: none;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.4s ease, transform 0.4s ease, border-color 0.2s, background 0.2s;
+    }
+
+    .inspired-badge.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .inspired-badge:hover {
+      background: rgba(232,80,10,0.18);
+      border-color: rgba(232,80,10,0.5);
+    }
+
+    .inspired-badge-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--ws-orange);
+      flex-shrink: 0;
+      box-shadow: 0 0 6px rgba(232,80,10,0.7);
+      animation: pulseDot 2s ease-in-out infinite;
+    }
+
+    @keyframes pulseDot {
+      0%, 100% { box-shadow: 0 0 6px rgba(232,80,10,0.7); }
+      50%       { box-shadow: 0 0 12px rgba(232,80,10,1); }
+    }
+
+    .inspired-badge-text {
+      font-size: 13px;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 400;
+      color: rgba(255,255,255,0.55);
+      white-space: nowrap;
+      line-height: 1;
+    }
+
+    .inspired-badge-text strong {
+      color: rgba(255,255,255,0.9);
+      font-weight: 500;
+    }
+
+    footer {
+      background: var(--ws-ink);
+      color: rgba(255,255,255,0.4);
+      text-align: center;
+      padding: 24px;
+      font-size: 12px;
+    }
+
+    footer a { color: var(--ws-orange); text-decoration: none; }
+
+    /* ─── ANIMATIONS ──────────────────────────── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body class="splash-active">
+
+<!-- SPLASH -->
+<div id="splash">
+  <div class="splash-progress"></div>
+
+  <div class="splash-content">
+    <div class="splash-eyebrow">A Customer's Unfiltered Account</div>
+
+    <span class="splash-line animate">
+      <span class="splash-line-inner">Ladies and Gentlemen,</span>
+    </span>
+    <span class="splash-line animate">
+      <span class="splash-line-inner">You are not ready</span>
+    </span>
+    <span class="splash-line animate">
+      <span class="splash-line-inner">for this.</span>
+    </span>
+
+    <div class="splash-divider"></div>
+
+    <div class="splash-sub">Preparing your WoodenStreet experience&hellip;</div>
+  </div>
+
+
+  <div class="splash-skip">Tap anywhere to skip &rarr;</div>
+</div>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="logo">
+    <div class="logo-icon">W</div>
+    <div class="logo-text">Wooden<span>Street</span></div>
+  </a>
+  <span class="nav-badge">⚠ Customer Alert</span>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-watermark">WS</div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">A Real Customer Story</div>
+    <h1>When Premium Furniture<br/>Promises <em>Don't Deliver.</em></h1>
+    <p class="hero-sub">
+      WoodenStreet markets itself as India's finest furniture brand — premium craftsmanship, timely delivery, stellar aftercare. This is the story of what actually happened.
+    </p>
+    <div class="hero-cta">
+      <a href="#story" class="btn-primary">Read My Experience →</a>
+      <a href="#issues" class="btn-ghost">See the Issues</a>
+    </div>
+    <div class="scroll-hint">Scroll</div>
+  </div>
+</div>
+
+<!-- STATS STRIP -->
+<div class="stats-strip">
+  <div class="stat">
+    <div class="stat-number">40</div>
+    <div class="stat-label">Days delayed (promised 20)</div>
+  </div>
+  <div class="stat">
+    <div class="stat-number">3</div>
+    <div class="stat-label">Carpenters who couldn't fix it</div>
+  </div>
+  <div class="stat">
+    <div class="stat-number">0</div>
+    <div class="stat-label">Proactive callbacks from support</div>
+  </div>
+  <div class="stat">
+    <div class="stat-number">10+</div>
+    <div class="stat-label">Days waiting for pickup (still pending)</div>
+  </div>
+</div>
+
+<!-- TIMELINE -->
+<div class="timeline-section" id="story">
+  <div class="timeline-inner">
+    <div class="reveal">
+      <div class="section-label">The Full Story</div>
+      <h2 class="section-title">A Timeline of <em>Broken Promises</em></h2>
+      <p class="section-intro">Every step of this journey revealed a pattern — a brand that sells premium experiences but delivers something far beneath that promise.</p>
+    </div>
+
+    <div class="timeline">
+
+      <div class="tl-item reveal">
+        <div class="tl-dot">🛒</div>
+        <div class="tl-body">
+          <div class="tl-date">1 FEBRUARY 2026</div>
+          <div class="tl-title">The Order — Full of Optimism</div>
+          <p class="tl-desc">We placed an order for a handcrafted temple unit. WoodenStreet's website promised premium quality, customisation, and delivery within 20 days. The price reflected all of that. We paid in full, excited to welcome a beautiful piece into our home.</p>
+        </div>
+      </div>
+
+      <div class="tl-item reveal">
+        <div class="tl-dot red">📵</div>
+        <div class="tl-body red">
+          <div class="tl-date red">DAYS 21–40 — RADIO SILENCE</div>
+          <div class="tl-title">A 20-Day Promise Turned Into 40 Days — With No Word From Them</div>
+          <p class="tl-desc">The 20-day window came and went. No message. No email. No call. We were the ones reaching out — repeatedly — to find out where our order was. WoodenStreet's response? Vague assurances and shifting timelines. A basic courtesy — a heads-up about the delay — was entirely absent.</p>
+        </div>
+      </div>
+
+      <div class="tl-item reveal">
+        <div class="tl-dot red">📦</div>
+        <div class="tl-body red">
+          <div class="tl-date red">40 DAYS LATER — DELIVERY</div>
+          <div class="tl-title">It Finally Arrived — And It Was Not What We Ordered</div>
+          <p class="tl-desc">The temple was delivered, but what arrived bore little resemblance to what was promised. The wood had a yellowed, aged appearance — not the rich, warm tones shown online. There were visible patches across the surface, chips in the wood, and the finish looked inconsistent. This was not premium craftsmanship.</p>
+        </div>
+      </div>
+
+      <div class="tl-item reveal">
+        <div class="tl-dot red">🔧</div>
+        <div class="tl-body red">
+          <div class="tl-date red">POST-DELIVERY — ASSEMBLY FAILURE</div>
+          <div class="tl-title">The Structure Couldn't Even Stand Steadily</div>
+          <p class="tl-desc">Once assembled, the problems multiplied. The entire structure wobbled — an unnerving instability for something meant to hold sacred items. The drawer channel was defective, making the drawer almost impossible to open or close. This wasn't wear and tear — it was a manufacturing failure right out of the box.</p>
+        </div>
+      </div>
+
+      <div class="tl-item reveal">
+        <div class="tl-dot red">👷</div>
+        <div class="tl-body red">
+          <div class="tl-date red">WEEKS OF FOLLOW-UP</div>
+          <div class="tl-title">Three Carpenters. Zero Solutions. We Had to Call Each Time.</div>
+          <p class="tl-desc">WoodenStreet sent three different carpenters across multiple visits. Not one of them could restore the piece to an acceptable condition. What made it worse — we had to initiate every visit ourselves. WoodenStreet never once followed up proactively. We were left chasing a resolution that never came.</p>
+        </div>
+      </div>
+
+      <div class="tl-item reveal">
+        <div class="tl-dot red">💳</div>
+        <div class="tl-body red">
+          <div class="tl-date red">THE RESOLUTION (OR LACK THEREOF)</div>
+          <div class="tl-title">No Refund. Just a Credit Note — And Then More Waiting.</div>
+          <p class="tl-desc">After exhausting every avenue for a repair, WoodenStreet agreed to take the item back — but refused to issue a refund. Their offer: a credit note, forcing us to spend more money with the same brand that had failed us. Under protest, we accepted. That was over 10 days ago. The product has still not been picked up. We're waiting, again, with no update.</p>
+        </div>
+      </div>
+
+    </div><!-- /timeline -->
+  </div>
+</div><!-- /timeline-section -->
+
+<!-- ISSUES GRID -->
+<section id="issues">
+  <div class="reveal">
+    <div class="section-label">Quality Breakdown</div>
+    <h2 class="section-title">Six Failures in <em>One Order</em></h2>
+    <p class="section-intro">This wasn't a single isolated issue — it was a systematic collapse across delivery, quality, and customer service.</p>
+  </div>
+
+  <div class="issues-grid">
+    <div class="issue-card reveal">
+      <div class="issue-icon">📅</div>
+      <div class="issue-title">100% Delivery Delay</div>
+      <p class="issue-desc">Promised in 20 days. Arrived in 40. No proactive communication about the delay at any point during the wait.</p>
+    </div>
+    <div class="issue-card reveal">
+      <div class="issue-icon">🪵</div>
+      <div class="issue-title">Substandard Wood Quality</div>
+      <p class="issue-desc">Yellowed discolouration, surface patches, and visible chips — inconsistent with premium product standards advertised online.</p>
+    </div>
+    <div class="issue-card reveal">
+      <div class="issue-icon">⚖️</div>
+      <div class="issue-title">Structural Instability</div>
+      <p class="issue-desc">The assembled unit wobbled noticeably. A piece holding religious items cannot be unsafe — this was a fundamental build failure.</p>
+    </div>
+    <div class="issue-card reveal">
+      <div class="issue-icon">🗄️</div>
+      <div class="issue-title">Faulty Drawer Mechanism</div>
+      <p class="issue-desc">The drawer channel was defective from day one. It could not be opened or closed smoothly, even after multiple carpenter visits.</p>
+    </div>
+    <div class="issue-card reveal">
+      <div class="issue-icon">📞</div>
+      <div class="issue-title">No Proactive Support</div>
+      <p class="issue-desc">Three repair attempts. Zero callbacks initiated by WoodenStreet. Every single follow-up had to be driven entirely by the customer.</p>
+    </div>
+    <div class="issue-card reveal">
+      <div class="issue-icon">🔄</div>
+      <div class="issue-title">Refund Refused</div>
+      <p class="issue-desc">Despite a clear product defect, a cash refund was denied. Only a credit note was offered — and 10+ days later, the pickup is still pending.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CALLOUT -->
+<section>
+  <div class="callout reveal">
+    <p class="callout-text">
+      "We didn't just receive a defective product — we received <em>indifference</em>. A brand that demands premium prices should stand behind its work with premium accountability."
+    </p>
+  </div>
+</section>
+
+<!-- PROMISE vs REALITY -->
+<section style="padding-top: 0;">
+  <div class="reveal">
+    <div class="section-label">Advertised vs Experienced</div>
+    <h2 class="section-title">What They Said vs <em>What Happened</em></h2>
+  </div>
+
+  <div class="compare-grid reveal">
+    <div class="compare-card promise">
+      <div class="compare-label">What WoodenStreet Promises</div>
+      <ul class="compare-list">
+        <li>Premium quality craftsmanship</li>
+        <li>On-time delivery within 20 days</li>
+        <li>Proactive order tracking & updates</li>
+        <li>Dedicated post-sales support</li>
+        <li>Hassle-free returns & full refund policy</li>
+        <li>Customer satisfaction guaranteed</li>
+      </ul>
+    </div>
+    <div class="compare-card reality">
+      <div class="compare-label">What We Actually Experienced</div>
+      <ul class="compare-list">
+        <li>Yellowed wood, chips, faulty mechanism</li>
+        <li>Delivered 20 days late with no communication</li>
+        <li>No updates — we had to call every time</li>
+        <li>3 carpenters, none able to fix it</li>
+        <li>Refund refused; credit note only</li>
+        <li>10+ days later, pickup still hasn't happened</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER CTA -->
+<div class="footer-cta">
+  <h2>Has This Happened to You?</h2>
+  <p>You deserve better than broken promises and silence. Share this page if you've had a similar experience with WoodenStreet — the more people know, the more pressure there is to change.</p>
+  <div class="share-buttons">
+    <a href="https://twitter.com/intent/tweet?text=My%20WoodenStreet%20experience%20-%20delayed%20delivery%2C%20defective%20product%2C%20no%20refund.%20Read%20the%20full%20story%3A&url=" class="share-btn" target="_blank">
+      𝕏 Share on X
+    </a>
+    <a href="https://www.facebook.com/sharer/sharer.php?u=" class="share-btn" target="_blank">
+      f Share on Facebook
+    </a>
+    <a href="https://wa.me/?text=Read%20my%20WoodenStreet%20experience%20-%20defective%20product%2C%20no%20refund%2C%20no%20support%3A" class="share-btn" target="_blank">
+      💬 Share on WhatsApp
+    </a>
+  </div>
+</div>
+
+<footer>
+  This is a personal account of a real customer experience. All events described are factual. &nbsp;|&nbsp;
+  <a href="https://www.woodenstreet.com" target="_blank">woodenstreet.com</a>
+</footer>
+
+<!-- PERSISTENT INSPIRED-BY BADGE -->
+<a href="https://airtelblack.com" target="_blank" class="inspired-badge" id="inspiredBadge">
+  <span class="inspired-badge-dot"></span>
+  <span class="inspired-badge-text">Inspired by <strong>airtelblack.com</strong></span>
+</a>
+
+<script>
+  // ─── SPLASH LOGIC ────────────────────────────
+  const splash = document.getElementById('splash');
+  let splashDone = false;
+
+  function dismissSplash() {
+    if (splashDone) return;
+    splashDone = true;
+    splash.classList.add('hiding');
+    document.body.classList.remove('splash-active');
+    setTimeout(() => {
+      splash.style.display = 'none';
+      document.getElementById('inspiredBadge').classList.add('visible');
+    }, 1200);
+  }
+
+  // Auto-dismiss after ~4.4s (progress bar completes at ~4.2s)
+  setTimeout(dismissSplash, 4300);
+
+  // Click / tap to skip
+  splash.addEventListener('click', dismissSplash);
+  splash.addEventListener('touchstart', dismissSplash, { passive: true });
+
+  // ─── SCROLL REVEAL ────────────────────────────
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        setTimeout(() => e.target.classList.add('visible'), i * 60);
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  reveals.forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>
